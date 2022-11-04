@@ -65,7 +65,7 @@
                   throw error;
                   return;
                 }
-                world.children[0].rawOpenProjectString();
+                world.children[0].rawOpenProjectString(data);
                 if (!urlParams.get('devmode')) {
                   world.children[0].controlBar.hide();
                   world.children[0].toggleAppMode(true);
