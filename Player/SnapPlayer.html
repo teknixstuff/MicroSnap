@@ -47,7 +47,21 @@
                 try {
                   data = await (fetch(urlParams.get('file') ?? 'Project.xml').then(r=>r.text()));
                 } catch (error) {
-                  new MenuMorph(null, 'Load failed: fetch error').popUpCenteredInWorld(world);
+                  new MenuMorph(null, `Load failed: fetch() error: ${error}`).popUpCenteredInWorld(world);
+                  throw error;
+                  return;
+                }
+                try {
+                  const parser = new DOMParser();
+                  const doc = parser.parseFromString(xmlStr, "application/xml");
+                  const errorNode = doc.querySelector("parsererror");
+                  if (errorNode !== null) {
+                    new MenuMorph(null, `Load failed: XML Parsing error: ${errorNode}`).popUpCenteredInWorld(world);
+                    throw errorNode;
+                    return;
+                  }
+                } catch (error) {
+                  new MenuMorph(null, `Load failed: error while checking for parsing errors: ${error}`).popUpCenteredInWorld(world);
                   throw error;
                   return;
                 }
