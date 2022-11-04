@@ -44,7 +44,14 @@
                 new IDE_Morph().openIn(world);
                 loop();
                 world.children[0].setUnifiedPalette(true);
-                world.children[0].rawOpenProjectString(await (fetch(urlParams.get('file') ?? 'Project.xml').then(r=>r.text())));
+                try {
+                  data = await (fetch(urlParams.get('file') ?? 'Project.xml').then(r=>r.text()));
+                } except (error) {
+                  new MenuMorph(null, 'Load failed: fetch error').popUpCenteredInWorld(world);
+                  throw error;
+                  return;
+                }
+                world.children[0].rawOpenProjectString();
                 if (!urlParams.get('devmode')) {
                   world.children[0].controlBar.hide();
                   world.children[0].toggleAppMode(true);
