@@ -46,7 +46,7 @@
                 world.children[0].setUnifiedPalette(true);
                 try {
                   data = await (fetch(urlParams.get('file') ?? 'Project.xml').then(r=>r.text()));
-                } except (error) {
+                } catch (error) {
                   new MenuMorph(null, 'Load failed: fetch error').popUpCenteredInWorld(world);
                   throw error;
                   return;
