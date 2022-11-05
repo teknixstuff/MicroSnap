@@ -41,8 +41,8 @@
                 lastTime = 0;
             window.onload = async function () {
                 world = new WorldMorph(document.getElementById('world'));
-                ide = new IDE_Morph().openIn(world);
-                ide.hide()
+                (ide = new IDE_Morph()).openIn(world);
+                ide.hide();
                 loop();
                 ide.setUnifiedPalette(true);
                 try {
