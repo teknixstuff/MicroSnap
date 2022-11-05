@@ -41,12 +41,14 @@
                 lastTime = 0;
             window.onload = async function () {
                 world = new WorldMorph(document.getElementById('world'));
-                new IDE_Morph().openIn(world);
+                ide = new IDE_Morph().openIn(world);
+                ide.hide()
                 loop();
-                world.children[0].setUnifiedPalette(true);
+                ide.setUnifiedPalette(true);
                 try {
                   data = await (fetch(urlParams.get('file') ?? 'Project.xml').then(r=>r.text()));
                 } catch (error) {
+                  ide.show();
                   new MenuMorph(null, `Load failed: fetch() error: ${error}`).popUpCenteredInWorld(world);
                   throw error;
                   return;
@@ -56,23 +58,27 @@
                   const doc = parser.parseFromString(data, "application/xml");
                   const errorNode = doc.querySelector("parsererror");
                   if (errorNode !== null) {
+                    ide.show();
                     new MenuMorph(null, `Load failed: XML Parsing error: ${errorNode}`).popUpCenteredInWorld(world);
                     throw errorNode;
                     return;
                   }
                 } catch (error) {
+                  ide.show();
                   new MenuMorph(null, `Load failed: error while checking for parsing errors: ${error}`).popUpCenteredInWorld(world);
                   throw error;
                   return;
                 }
-                world.children[0].rawOpenProjectString(data);
-                if (!urlParams.get('devmode')) {
-                  world.children[0].controlBar.hide();
-                  world.children[0].toggleAppMode(true);
-                  world.children[0].controlBar.hide();
+                ide.rawOpenProjectString(data);
+                if (urlParams.get('devmode')) {
+                  ide.show();
+                } else {
+                  ide.controlBar.hide();
+                  ide.toggleAppMode(true);
+                  ide.controlBar.hide();
                   var handle = setInterval(function () {
                       var allSpritesDone = true;
-                      world.children[0].stage.children.forEach(function (child) {
+                      ide.stage.children.forEach(function (child) {
                           if (!child.costumes) { // If the child has no costumes it doesn't matter
                               return;
                           }
@@ -93,7 +99,8 @@
 
                       if (allSpritesDone) {
                           clearInterval(handle);
-                          world.children[0].runScripts();
+                          ide.show();
+                          ide.runScripts();
                       }
                   }, 100);
                 }
